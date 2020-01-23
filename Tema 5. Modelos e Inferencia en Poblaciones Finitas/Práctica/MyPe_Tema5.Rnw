@@ -1,0 +1,165 @@
+\documentclass[12pt, spanish]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{amssymb, amsmath, amsbsy} % simbolitos
+
+%Formato de la hoja
+\textwidth 18cm \textheight 24cm \oddsidemargin
+-0.5cm \evensidemargin -1cm \topmargin -2cm 
+
+\title{Tema 5. Modelado y Predicci\'on Estad\'istica.\\ Dise\~no muestral para una poblaci\'on finita}
+\author{Beatriz Coronado Sanz}
+
+\begin{document}
+\maketitle
+
+\SweaveOpts{concordance=TRUE,echo=FALSE}
+
+\section{Datos del trabajo}
+Como datos tenemos un listado poblacional de las titulaciones que se imparten en la Universidad de Sevilla (anuario estad\'istico 2017-18).Los datos se encuentran en el fichero \textit{Titulaciones.xlsx}. Mostramos a continuaci\'on la cabecera de los datos:
+
+<<>>=
+library(sampling)
+library("xlsx")
+library("readxl")
+
+#Leer los datos Titulaciones.xlsx
+Titulaciones <- read_excel("Titulaciones.xlsx")
+head(Titulaciones)
+@
+
+Para cada elemento se recoge la rama de ense\~nanza (Rama), la facultad o escuela donde se imparte (Centro), el nombre de la tituaci\'on (Titulacion) y el n\'umero de alumnos matriculados por sexo y total (Hombre, Mujer y Total).
+
+\section{Dise\~no poliet\'apico propuesto}
+
+Vamos a realizar un dise\~no poliet\'apico estratificado en dos etapas. Los estratos ser\'an las distintas ramas de ense\~nanza.\bigskip
+
+En la primera etapa, para cada rama vamos a seleccionar una facultad o escuela seg\'un un MAS.\bigskip
+
+En la segunda etapa, para cada facultad realizaremos un dise\~no $\Pi$PS seg\'un el n\'umero de alumnos para elegir un determinado n\'umero de titulaciones.\bigskip
+
+El n\'umero de titulaciones de cada facultad ser\'a proporcional al n\'umero de titulaciones de cada rama. En otras palabras, usaremos afijaci\'on proporcional.\bigskip
+
+Para realizar este dise\~no, lo primero que haremos ser\'a ordenar las titulaciones por rama. Seleccionamos $n=10$ como tama\~no muestral (n\'umero de titulaciones que queremos obtener al final en nuestro estudio) y calculamos el n\'umero de titulaciones que debemos tener por rama en el resultado final.\bigskip
+
+Vemos a continuaci\'on cuantas titulaciones hay por rama y cuantas tenemos que elegir en el resultado final: 
+
+
+<<>>=
+###  Estratificado - MC2(MAS,MAS) 
+###  En cada rama (estrato), selecciono 1 facultad segun MAS
+###  y en cada facultad se selecciona un PiPS de titulaciones según su número de alumnos (tam. muestral n)
+
+datos=Titulaciones[order(Titulaciones$Rama), ] 
+N_estrat=as.vector(table(datos$Rama))
+tams=cbind(unique(datos$Rama),N_estrat)
+
+#Tamaño muestral
+n=10
+#Afijación proporcional al número de titulaciones en cada rama
+n_estrat=round(N_estrat*n/sum(N_estrat))
+tams=cbind(tams,n_estrat);tams
+@
+
+Lo siguiente que haremos ser\'a calcular las propiedades de inclusi\'on para cada titulaci\'on:
+
+<<echo=TRUE>>=
+#Propiedades de inclusion
+pikk=10*as.vector(tapply(datos$Total,datos$Titulacion,sum))/sum(datos$Total)
+head(pikk)
+@
+
+Aplicamos el dise\~no muestral y obtenemos la siguiente muestra:
+
+<<>>=
+m=mstage(datos, stage=list("stratified","cluster",""), varnames=list("Rama","Centro","Titulacion"), 
+         size=list(N_estrat,rep(1,5),n_estrat),method=list("","srswor","systematic"),pik=list("","",pikk),
+         description=TRUE) 
+
+@
+
+Observamos que a veces el n\'umero de titulaciones escogidas es menor que el tama\~no muestral $n=10$ que hemos seleccionado. Esto es porque, al realizar un MAS sobre las facultades, se escoge alguna facultad que no cumple el m\'inimo de titulaciones para el tama\~no de su rama.\bigskip
+
+Las titulaciones escogidas son:
+<<>>=
+xx=getdata(datos,m)[[3]]
+xx$Titulacion
+@
+
+\section{Estudio de una variable de inter\'es}
+
+La variable de inter\'es que hemos escogido es el n\'umero de alumos repetidores en cada titulaci\'on.\bigskip
+
+Para generar esta variable elegimos un n\'umero aleatorio entre $0$ y el m\'aximo n\'umero de alumnos de cada titulaci\'on de la muestra. De esta forma escogemos un n\'umero de alumnos repetidores para cada titulaci\'on. 
+
+
+<<echo=TRUE>>=
+#Generar variable aleatoria Y
+AlumRep=round(runif(length(xx$Titulacion), min=0, max=xx$Total),digits=0)
+@
+
+A continuaci\'on mostramos para cada titulaci\'on el n\'umero de alumnos repetidores, el n\'umero total de alumnos y la proporci\'on de alumnos repetidores por titulaci\'on:
+
+<<>>=
+Titulacion=xx$Titulacion
+Total=xx$Total
+Proporcion=round(AlumRep/xx$Total*100,digits=2)
+
+tabla=cbind(Titulacion,AlumRep,Total,Proporcion);tabla
+
+@
+
+Guardamos la muestra obtenida de las titulaciones escogidas y de la variable que hemos creado en \textit{muestra.xlsx}.
+
+<<>>=
+datosAux=cbind(xx[,1:6],AlumRep)
+write.xlsx(datosAux, file="muestra.xlsx", sheetName = "Muestra Titulos", 
+           col.names = TRUE, row.names = FALSE, append = FALSE)
+
+@
+
+\subsection{Estimaciones e intervalos de confianza para la variable de inter\'es}
+
+Vamos a obtener los estimadores e intervalos de confianza para el total y la media poblacional de alumnos repetidos por titulaci\'on.\bigskip
+
+Para ello tenemos que usar la funci\'on \textit{svydesign} para definir el dise\~no muestral que queremos aplicar:
+
+<<>>=
+#Estimaciones e intervalos de confianza de T(AlumRep) y media(AlumRep)
+library(survey)
+@
+
+<<echo=TRUE>>=
+dis.MC2= svydesign(ids=~Rama+1, probs=xx$Prob , data=xx)
+@
+
+Para estimar la variable total usamos la funci\'on \textit{svytotal}. El resultado obtenido es:
+
+<<>>=
+## Estimacion de total (HT) 
+## Estima varianza sup. con reemplazamiento
+t=svytotal(~AlumRep,design=dis.MC2); t
+@
+
+El primer valor es la estimaci\'on obtenida para el total y el segundo la desviaci\'on t\'ipica. El intervalo de confianza asociado es:
+
+<<>>=
+confint(t) #Intervalo de confianza
+@
+
+Para estimar la variable media usamos la funci\'on \textit{svymean}. El resultado obtenido es:
+
+<<>>=
+## Estimación de la media (Hajek)  
+## Estima varianza sup. con reemplazamiento
+s=svymean(~AlumRep,design=dis.MC2); s
+@
+
+Y su intervalo de confianza asociado:
+<<>>=
+confint(s)
+@
+
+\end{document}

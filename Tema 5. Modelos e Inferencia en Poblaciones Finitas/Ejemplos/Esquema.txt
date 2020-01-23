@@ -1,0 +1,21 @@
+Uso de librerías "library(sampling)",  "library(survey)"
+
+DATOS: swissmunicipalities (conjunto de datos en sampling)
+
+    DISEÑOS MUESTRALES
+
+El conjunto de datos recoge información sobre N=2896 municipios de Suiza. Será utilizado como población sobre la que se aplicarán distintos diseños muestrales.
+
+(Script: Muestreos swissmun.R)
+
+        Muestreo aleatorio simple (MAS) (Funciones: sample, srswor)
+        Muestreo sistemático
+        Muestreo de probabilidades proporcionales (PiPS)  (Funciones: UPbrewer, UPmidzuno, UPsystematic, UPsampford, ...)
+        Muestreo estratificado. (Función: strata)
+        Muestreo por conglomerados (en una etapa)  (Función: cluster)
+        Muestreo multietápico  (Función: mstage)
+
+    ESTIMADORES    (Script: Estimacion sampling.R)
+        Estimador de Horvitz-Thompson  (Función: HTestimator)  Estimador insesgado de la varianza [si    positivas y conocidas] (Función: varHT)  Estimador de la varianza suponiendo muestreo con reemplazamiento  [c.c.]
+        Estimador de Hajek (Función: Hajekestimator). Estimación de la varianza a través de la aproximación lineal. (Función: vartaylor_ratio)
+        Estimación en diseños complejos            (Script: Estimacion survey.R)  Definir diseño muestral   (Función: svydesign)  Estimación del total    (Función: svytotal)  Estimación de la media   (Función: svymean)

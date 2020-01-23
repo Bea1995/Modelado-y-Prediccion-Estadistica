@@ -1,0 +1,203 @@
+[using ordinary kriging]
+we're at location X: 181180 Y: 333740 Z: 0
+zero block size
+we're at point X: 181180 Y: 333740 Z: 0
+
+# X:
+Matrix: 6 by 1
+rbind(
+c(        1), # row 1
+c(        1), # row 2
+c(        1), # row 3
+c(        1), # row 4
+c(        1), # row 5
+c(        1)  # row 6
+)
+[using generalized covariances: max_val - semivariance()]
+# Covariances (x_i, x_j) matrix C (upper triangle):
+Matrix: 6 by 6
+rbind(
+c( 0.641266,  0.520789,  0.473914,  0.341701,  0.248934,  0.166306), # row 1
+c( 0.520789,  0.641266,  0.451951,  0.320512,  0.251964,   0.16804), # row 2
+c( 0.473914,  0.451951,  0.641266,  0.450406,  0.349159,  0.256748), # row 3
+c( 0.341701,  0.320512,  0.450406,  0.641266,  0.439753,  0.357254), # row 4
+c( 0.248934,  0.251964,  0.349159,  0.439753,  0.641266,  0.483895), # row 5
+c( 0.166306,   0.16804,  0.256748,  0.357254,  0.483895,  0.641266)  # row 6
+)
+
+# glm->C, Choleski decomposed::
+Matrix: 6 by 6
+rbind(
+c( 0.800791,  0.650344,  0.591808,  0.426705,  0.310861,  0.207677), # row 1
+c(        0,  0.467246,  0.143549, 0.0920432,  0.106576,  0.070581), # row 2
+c(        0,         0,  0.520022,  0.355112,  0.288238,  0.237897), # row 3
+c(        0,         0,         0,  0.569747,  0.342153,  0.311824), # row 4
+c(        0,         0,         0,         0,  0.577168,  0.409849), # row 5
+c(        0,         0,         0,         0,         0,  0.520912)  # row 6
+)
+
+# X'C-1 X:
+Matrix: 1 by 1
+rbind(
+c(  2.62219)  # row 1
+)
+
+# beta:
+Vector: dim: 1
+c(  6.24918)
+# Cov(beta), (X'C-1 X)-1:
+Matrix: 1 by 1
+rbind(
+c( 0.381361)  # row 1
+)
+
+# Corr(beta):
+Matrix: 1 by 1
+rbind(
+c(        1)  # row 1
+)
+
+# X0 (X values at prediction location x0):
+Matrix: 1 by 1
+rbind(
+c(        1)  # row 1
+)
+
+# BLUE(mu), E(y(x0)) = X0'beta:
+Vector: dim: 1
+c(  6.24918)
+# Covariances (x_i, x_0), C0:
+Matrix: 6 by 1
+rbind(
+c( 0.426394), # row 1
+c( 0.360094), # row 2
+c( 0.393021), # row 3
+c(  0.32137), # row 4
+c( 0.199049), # row 5
+c( 0.132002)  # row 6
+)
+
+# C-1 C0:
+Matrix: 6 by 1
+rbind(
+c( 0.463762), # row 1
+c(-0.0131774), # row 2
+c( 0.200241), # row 3
+c( 0.195434), # row 4
+c(-0.074369), # row 5
+c(-0.0439033)  # row 6
+)
+
+# [a] Cov_ij(B,B) or Cov_ij(0,0):
+Matrix: 1 by 1
+rbind(
+c( 0.641266)  # row 1
+)
+
+# [c] (x0-X'C-1 c0)'(X'C-1 X)-1(x0-X'C-1 c0):
+Matrix: 1 by 1
+rbind(
+c(0.0282174)  # row 1
+)
+
+# [b] c0'C-1 c0:
+Matrix: 1 by 1
+rbind(
+c( 0.313907)  # row 1
+)
+
+# Best Linear Unbiased Predictor:
+Vector: dim: 1
+c(  6.53545)
+# MSPE ([a]-[b]+[c]):
+Matrix: 1 by 1
+rbind(
+c( 0.355576)  # row 1
+)
+
+# kriging weights:
+Matrix: 6 by 1
+rbind(
+c( 0.523605), # row 1
+c(0.0504742), # row 2
+c( 0.203854), # row 3
+c( 0.223908), # row 4
+c(-0.0573607), # row 5
+c(0.0555196)  # row 6
+)
+
+
+we're at location X: 181140 Y: 333700 Z: 0
+zero block size
+we're at point X: 181140 Y: 333700 Z: 0
+
+# X0 (X values at prediction location x0):
+Matrix: 1 by 1
+rbind(
+c(        1)  # row 1
+)
+
+# BLUE(mu), E(y(x0)) = X0'beta:
+Vector: dim: 1
+c(  6.24918)
+# Covariances (x_i, x_0), C0:
+Matrix: 6 by 1
+rbind(
+c( 0.480562), # row 1
+c( 0.412636), # row 2
+c( 0.429574), # row 3
+c( 0.334139), # row 4
+c( 0.217055), # row 5
+c(  0.14383)  # row 6
+)
+
+# C-1 C0:
+Matrix: 6 by 1
+rbind(
+c( 0.531229), # row 1
+c( 0.031313), # row 2
+c( 0.203588), # row 3
+c(  0.14072), # row 4
+c(-0.0599743), # row 5
+c(-0.0363365)  # row 6
+)
+
+# [a] Cov_ij(B,B) or Cov_ij(0,0):
+Matrix: 1 by 1
+rbind(
+c( 0.641266)  # row 1
+)
+
+# [c] (x0-X'C-1 c0)'(X'C-1 X)-1(x0-X'C-1 c0):
+Matrix: 1 by 1
+rbind(
+c( 0.013689)  # row 1
+)
+
+# [b] c0'C-1 c0:
+Matrix: 1 by 1
+rbind(
+c( 0.384442)  # row 1
+)
+
+# Best Linear Unbiased Predictor:
+Vector: dim: 1
+c(  6.64149)
+# MSPE ([a]-[b]+[c]):
+Matrix: 1 by 1
+rbind(
+c( 0.270513)  # row 1
+)
+
+# kriging weights:
+Matrix: 6 by 1
+rbind(
+c( 0.572911), # row 1
+c( 0.075647), # row 2
+c( 0.206104), # row 3
+c( 0.160553), # row 4
+c(-0.0481278), # row 5
+c(0.0329126)  # row 6
+)
+
+

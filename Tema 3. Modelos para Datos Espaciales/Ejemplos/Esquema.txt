@@ -1,0 +1,31 @@
+Uso de librerías "library(gstat)"
+
+DATOS: meuse (conjunto de datos en gstat)
+
+Conjunto de datos generados por uno de los estudios realizados sobre las llanuras 
+de inundación del río Meuse, en el que se analizaba la contaminación por metales 
+pesados, como consecuencia de los numerosos desbordamientos que éste ha sufrido desde 
+la industrialización del valle.
+
+Introducción al conj de datos meuse.pdf  (fichero adjunto)
+
+Variable objetivo: concentración de cinc    (Script: Script_Datos espaciales_1.R )
+
+    1. ANÁLISIS ESTRUCTURAL.
+        Resumen de medidas estadísticas
+        Representaciones gráficas
+        Preparación del grid (rejilla) : meuse.grid
+    2. CONSTRUCCIÓN DEL VARIOGRAMA MUESTRAL (Función: variogram)
+        Variograma nube
+        Variograma experimental
+        Estimador robusto de Cressie
+    3. AJUSTE DE MODELOS TEORICOS DE VARIOGRAMA
+        Generación de modelos teóricos de variogramas (Función: vgm)
+        Bondad de ajuste del variograma muestral a un modelo teórico 
+	(Función: fit.variogram)
+    4. KRIGING ORDINARIO  (Función: krige)
+        Predicción kriging sobre puntos definidos en la rejilla
+        Representación espacial
+        Predicción sobre un punto. Análisis de la salida.
+        Kriging ordinario tomando las observaciones más cercanas.
+    5. MÉTODO DE VALIDACIÓN CRUZADA  (Función: krige.cv)
